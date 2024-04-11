@@ -68,7 +68,7 @@ function bdErreurExit(array $err):void {
             fwrite($fichier, "{$err['message']}\n");
             if (isset($err['autres'])){
                 foreach($err['autres'] as $cle => $valeur){
-                    fwrite($fichier,"{$cle} :\n{$valeur}\n");
+                    fwrite($fichier,"$cle :\n$valeur\n");
                 }
             }
             fwrite($fichier,"Pile des appels de fonctions :\n");
@@ -119,6 +119,7 @@ function bdConnect(): mysqli {
         $err['message'] = mb_convert_encoding($e->getMessage(), 'UTF-8', 'ISO-8859-1');
         $err['appels'] = $e->getTraceAsString();
         bdErreurExit($err); // ==> ARRET DU SCRIPT
+        exit(1);
     }
 }
 
@@ -147,6 +148,7 @@ function bdSendRequest(mysqli $bd, string $sql): mysqli_result|bool {
         $err['appels'] = $e->getTraceAsString();
         $err['autres'] = array('Requête' => $sql);
         bdErreurExit($err);    // ==> ARRET DU SCRIPT
+        exit(1);
     }
 }
 
@@ -307,7 +309,49 @@ function affLigneInput(string $libelle, array $attributs = array(), string $pref
                 '<td><input id="', $prefixId, $attributs['name'], '"';
 
     foreach ($attributs as $cle => $value){
-        echo ' ', $cle, ($value !== null ? "='{$value}'" : '');
+        echo ' ', $cle, ($value !== null ? "='$value'" : '');
     }
     echo '></td></tr>';
+}
+
+/**
+ * Applies BBCode formatting to the given string to replace all unicode BBCodes with their HTML counterpart
+ * @param string $text The text to format
+ * @return void
+ */
+function BBCodeUnicode(string $text): string {
+    $text = preg_replace('/\[#([[:digit:]]*)]/', '&#\1', $text);
+    return preg_replace('/\[#x([[:alnum:]]*)]/', '&#x\1', $text);
+}
+
+/**
+ * Applies BBCode formatting to the given string
+ * @param string $text The text to format
+ * @return string
+ */
+function BBCodeProcess(string $text): string {
+    $text = BBCodeUnicode($text);
+    $tags = [
+        'p' => 'p',
+        'gras' => 'strong',
+        'it' => 'em',
+        'citation' => 'blockquote',
+        'liste' => 'ul',
+        'item' => 'li'
+    ];
+    foreach ($tags as $key => $value) {
+        $text = preg_replace('#\['.$key.'](.*?)\[/'.$key.']#s', '<'.$value.'>\1</'.$value.'>', $text);
+    }
+    $text = preg_replace('#\[a:(.*?)](.*?)\[/a]#s', '<a href="\1">\2</a>', $text);
+    $text = preg_replace('/\[br]/', '<br>', $text);
+    $text = preg_replace(
+        '/\[widget-deezer:([[:alnum:]]*):([[:alnum:]]*):(.*?) (.*?)]/',
+        '<figure><iframe width=\'\1\' height=\'\2\' src=\'\3\' allow=\'encrypted-media; clipboard-write\'></iframe><figcaption>\4</figcaption></figure>',
+        $text
+    );
+    return preg_replace(
+        '/\[widget-deezer:([[:alnum:]]*):([[:alnum:]]*):(.*?)]/',
+        '<iframe width=\'\1\' height=\'\2\' src=\'\3\' allow=\'encrypted-media; clipboard-write\'></iframe>',
+        $text
+    );
 }

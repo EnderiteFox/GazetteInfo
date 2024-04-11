@@ -10,6 +10,8 @@ ob_start();
 // démarrage ou reprise de la session
 session_start();
 
+if (!parametresControle('post', [], ['btnComment', 'commentText'])) sessionExit();
+
 affEntete('Article');
 
 // génération du contenu de la page
@@ -20,6 +22,21 @@ affPiedDePage();
 // envoi du buffer
 ob_end_flush();
 
+/**
+ * S'occupe de la gestion de l'envoi du commentaire
+ * @return void
+ */
+function processComment(mysqli $bd): void {
+    if (!estAuthentifie()) return;
+    if (!isset($_POST['btnComment'])) return;
+    $text = mysqli_real_escape_string($bd, $_POST['commentText']);
+    $date = date('YmdHi');
+    $pseudo = $_SESSION['pseudo'];
+    $id = $_GET['id'];
+    $sql = "INSERT INTO commentaire VALUES (NULL, '$pseudo', '$text', $date, $id)";
+    bdSendRequest($bd, $sql);
+    header('Location: article.php?id='.$_GET['id']);
+}
 
 /*********************************************************
  *
@@ -64,9 +81,6 @@ function affContenuL() : void {
 
     $result = bdSendRequest($bd, $sql);
 
-    // Fermeture de la connexion au serveur de BdD, réalisée le plus tôt possible
-    mysqli_close($bd);
-
     // pas d'articles --> fin de la fonction
     if (mysqli_num_rows($result) == 0) {
         affErreurL('L\'identifiant de l\'article n\'a pas été trouvé dans la base de données');
@@ -76,6 +90,11 @@ function affContenuL() : void {
     }
 
     $tab = mysqli_fetch_assoc($result);
+
+    processComment($bd);
+
+    // Fermeture de la connexion au serveur de BdD, réalisée le plus tôt possible
+    mysqli_close($bd);
 
     // Mise en forme du prénom et du nom de l'auteur pour affichage dans le pied du texte de l'article
     // Exemple :
@@ -95,7 +114,7 @@ function affContenuL() : void {
             '<article>',
                 '<h3>', $tab['arTitre'], '</h3>',
                 '<img src="../upload/', $tab['arID'], '.jpg" alt="Photo d\'illustration | ', $tab['arTitre'], '">',
-                $tab['arTexte'],
+                BBCodeProcess($tab['arTexte']),
                 '<footer>',
                     'Par <a href="redaction.php#', $tab['utPseudo'], '">', $auteur, '</a>. ',
                     'Publié le ', dateIntToStringL($tab['arDatePubli']),
@@ -118,7 +137,7 @@ function affContenuL() : void {
                     '<p>Commentaire de <strong>', htmlProtegerSorties($tab['coAuteur']),
                         '</strong>, le ', dateIntToStringL($tab['coDate']),
                     '</p>',
-                    '<blockquote>', htmlProtegerSorties($tab['coTexte']), '</blockquote>',
+                    '<blockquote>', BBCodeUnicode(htmlProtegerSorties($tab['coTexte'])), '</blockquote>',
                 '</li>';
         }
         echo '</ul>';
@@ -131,10 +150,25 @@ function affContenuL() : void {
     // Libération de la mémoire associée au résultat de la requête
     mysqli_free_result($result);
 
+    if (!estAuthentifie()) {
+        echo
+            '<p>',
+                '<a href="./connexion.php">Connectez-vous</a> ou <a href="./inscription.php">inscrivez-vous</a> pour ',
+                'pouvoir commenter cet article !',
+            '</p>';
+    }
+    else {
+        echo
+            '<form method="post" action="article.php?id='.$_GET['id'].'">',
+                '<fieldset>',
+                    '<legend>Ajoutez un commentaire</legend>',
+                    '<textarea name="commentText" rows="5" cols="100"></textarea>',
+                    '<input type="submit" name="btnComment">',
+                '</fieldset>',
+            '</form>';
+    }
+
     echo
-        '<p>',
-            '<a href="./connexion.php">Connectez-vous</a> ou <a href="./inscription.php">inscrivez-vous</a> pour pouvoir commenter cet article !',
-        '</p>',
         '</section>',
     '</main>';
 }

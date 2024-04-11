@@ -40,7 +40,7 @@ else{
 // génération de la page
 affEntete('Inscription');
 
-affFormulaireL($erreurs);
+affFormulaireL(null);
 
 affPiedDePage();
 
@@ -318,7 +318,6 @@ function traitementInscriptionL(): array {
 
     $_SESSION['redacteur'] = false; // utile pour l'affichage de la barre de navigation
 
-    // redirection vers la page protegee.php : à modifier dans le projet !
-    header('Location: protegee.php');
+    header('Location: ../index.php');
     exit(); //===> Fin du script
 }
