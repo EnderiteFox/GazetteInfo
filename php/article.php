@@ -10,7 +10,7 @@ ob_start();
 // démarrage ou reprise de la session
 session_start();
 
-if (!parametresControle('post', [], ['btnComment', 'commentText'])) sessionExit();
+if (!parametresControle('post', [], ['btnComment', 'commentText', 'btnSuppComm', 'commNum'])) sessionExit();
 
 affEntete('Article');
 
@@ -24,6 +24,7 @@ ob_end_flush();
 
 /**
  * S'occupe de la gestion de l'envoi du commentaire
+ * @param mysqli $bd La base de donnée
  * @return void
  */
 function processComment(mysqli $bd): void {
@@ -34,6 +35,20 @@ function processComment(mysqli $bd): void {
     $pseudo = $_SESSION['pseudo'];
     $id = $_GET['id'];
     $sql = "INSERT INTO commentaire VALUES (NULL, '$pseudo', '$text', $date, $id)";
+    bdSendRequest($bd, $sql);
+    header('Location: article.php?id='.$_GET['id']);
+}
+
+/**
+ * S'occupe de la gestion de la suppression d'un commentaire
+ * @param mysqli $bd La base de donnée
+ * @return void
+ */
+function processSupprComment(mysqli $bd): void {
+    if (!estAuthentifie()) return;
+    if (!isset($_POST['btnSuppComm'])) return;
+    $commNum = mysqli_real_escape_string($bd, $_POST['commNum']);
+    $sql = 'DELETE FROM commentaire WHERE coID = "'.$commNum.'"';
     bdSendRequest($bd, $sql);
     header('Location: article.php?id='.$_GET['id']);
 }
@@ -92,6 +107,7 @@ function affContenuL() : void {
     $tab = mysqli_fetch_assoc($result);
 
     processComment($bd);
+    processSupprComment($bd);
 
     // Fermeture de la connexion au serveur de BdD, réalisée le plus tôt possible
     mysqli_close($bd);
@@ -133,8 +149,14 @@ function affContenuL() : void {
     if (isset($tab['coID'])) {
         echo '<ul>';
         while ($tab = mysqli_fetch_assoc($result)) {
-            echo '<li>',
-                    '<p>Commentaire de <strong>', htmlProtegerSorties($tab['coAuteur']),
+            echo '<li>';
+            if (estAuthentifie() && $_SESSION['pseudo'] === $tab['coAuteur']){
+                echo '<form method="post" action="article.php?id=', $_GET['id'], '">',
+                '<input type="text" name="commNum" value="', $tab['coID'], '" hidden>',
+                '<input type="submit" name="btnSuppComm" value="Supprimer le commentaire">',
+                '</form>';
+            }
+            echo    '<p>Commentaire de <strong>', htmlProtegerSorties($tab['coAuteur']),
                         '</strong>, le ', dateIntToStringL($tab['coDate']),
                     '</p>',
                     '<blockquote>', BBCodeUnicode(htmlProtegerSorties($tab['coTexte'])), '</blockquote>',

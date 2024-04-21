@@ -40,7 +40,7 @@ else{
 // génération de la page
 affEntete('Inscription');
 
-affFormulaireL(null);
+affFormulaireL($erreurs);
 
 affPiedDePage();
 
@@ -79,7 +79,6 @@ function affFormulaireL(?array $err): void {
             '<section>',
                 '<h2>Formulaire d\'inscription</h2>',
                 '<p>Pour vous inscrire, remplissez le formulaire ci-dessous.</p>';
-
     if (is_array($err)) {
         echo    '<div class="erreur">Les erreurs suivantes ont été relevées lors de votre inscription :',
                     '<ul>';

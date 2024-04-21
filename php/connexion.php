@@ -34,8 +34,8 @@ function connexion(): void {
     $bd = bdConnect();
 
     // Récupération de l'utilisateur dans la base de donnée
-    $_POST['pseudo'] = mysqli_real_escape_string($bd, $_POST['pseudo']);
-    $sql = 'SELECT utPasse, utRedacteur FROM utilisateur WHERE utPseudo = \''.$_POST['pseudo'].'\'';
+    $pseudo = mysqli_real_escape_string($bd, trim($_POST['pseudo']));
+    $sql = 'SELECT utPasse, utRedacteur FROM utilisateur WHERE utPseudo = \''.$pseudo.'\'';
     $result = bdSendRequest($bd, $sql);
 
     if (mysqli_num_rows($result) != 1) {
@@ -53,7 +53,7 @@ function connexion(): void {
     if (!password_verify($_POST['password'], $hash)) return;
 
     // Définition des variables de session
-    $_SESSION['pseudo'] = $_POST['pseudo'];
+    $_SESSION['pseudo'] = trim($_POST['pseudo']);
     $_SESSION['redacteur'] = $redacteur == 1;
 
     mysqli_close($bd);

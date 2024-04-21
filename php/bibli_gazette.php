@@ -43,7 +43,6 @@ define('LMIN_PASSWORD', 4);
  * @return void
  */
 function affEntete(string $titre, string $prefixe = '..') : void {
-
     echo
         '<!doctype html>',
         '<html lang="fr">',
@@ -71,7 +70,6 @@ function affEntete(string $titre, string $prefixe = '..') : void {
  * @return void
  */
 function affMenu(string $prefixe = '..') : void {
-
     echo    '<nav><ul>',
                 '<li><a href="', $prefixe, '/index.php">Accueil</a></li>',
                 '<li><a href="', $prefixe, '/php/actus.php">Toute l\'actu</a></li>',

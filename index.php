@@ -10,6 +10,7 @@ ob_start();
 // démarrage ou reprise de la session
 session_start();
 
+
 affEntete('Le site de désinformation n°1 des étudiants en Licence Info', '.');
 
 // génération du contenu de la page

@@ -103,7 +103,7 @@ a[href^=http]:hover::after {
 
 body > header, main, body > footer {
     width: 900px;
-    margin: 0px auto;
+    margin: 0 auto;
     background-color: transparent;
 }
 
@@ -169,7 +169,7 @@ figure {
 nav {
     position: fixed;
     z-index: 1000;
-    top: 0px;
+    top: 0;
     width: 100%;
     height: 40px;
 }
@@ -272,7 +272,7 @@ section:last-of-type {
 section > h2 {
     position: absolute;
     top: -30px;
-    left: 0px;
+    left: 0;
     height: 20px;
     background: red;
     color: white;
@@ -352,6 +352,15 @@ fieldset {
     padding: 10px;
 }
 
+main > section ul li input {
+    visibility: hidden;
+    float: right;
+}
+
+main > section ul li:hover input {
+    visibility: visible;
+}
+
 
 /******************************************************************************
     Règles appliquées à la page redaction.html
@@ -392,11 +401,11 @@ section article.redacteur h4 {
     position: absolute;
     width: auto;
     text-align: right;
-    right: 0px;
+    right: 0;
     padding: 5px;
     background: black;
     color: white;
-    top: 0px;
+    top: 0;
 }
 
 section article.redacteur p {
@@ -415,7 +424,7 @@ section article.resume {
 }
 
 section article.resume:first-of-type {
-    border-radius: 10px 10px 0px 0px;
+    border-radius: 10px 10px 0 0;
 }
 
 section article.resume:last-of-type {
@@ -469,7 +478,7 @@ section > a > img {
     margin: 0 0 10px 0;
 }
 section > a:hover > img {
-    box-shadow: 0px 0px 20px red;
+    box-shadow: 0 0 20px red;
 }
 
 /** Tableau horoscope  **/
@@ -530,7 +539,7 @@ form td[colspan] label {
 
 
 form input[type=submit], form input[type=reset] {
-    margin: 0px 10px;
+    margin: 0 10px;
     width: auto;
     height: 28px;
     background-color: #f0f0f0;
