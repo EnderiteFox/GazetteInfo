@@ -10,28 +10,28 @@ ini_set('display_startup_errors', '1');
 error_reporting( E_ALL );
 
 // Phase de développement (IS_DEV = true) ou de production (IS_DEV = false)
-define ('IS_DEV', true);
+const IS_DEV = true;
 
 /** Constantes : les paramètres de connexion au serveur MariaDB */
-define ('BD_NAME', 'gazette_bd');
-define ('BD_USER', 'gazette_user');
-define ('BD_PASS', 'gazette_pass');
-define ('BD_SERVER', 'mariadb-hostname');
+const BD_NAME = 'gazette_bd';
+const BD_USER = 'gazette_user';
+const BD_PASS = 'gazette_pass';
+const BD_SERVER = 'mariadb-hostname';
 
 // Définit le fuseau horaire par défaut à utiliser. Disponible depuis PHP 5.1
 date_default_timezone_set('Europe/Paris');
 
 // limites liées aux tailles des champs de la table utilisateur
-define('LMAX_PSEUDO', 20);    // taille du champ usLogin de la table utilisateur
-define('LMAX_NOM', 50);      // taille du champ usNom de la table utilisateur
-define('LMAX_PRENOM', 60);   // taille du champ usPrenom de la table utilisateur
-define('LMAX_EMAIL', 255);   // taille du champ usMail de la table utilisateur
+const LMAX_PSEUDO = 20;    // taille du champ usLogin de la table utilisateur
+const LMAX_NOM = 50;      // taille du champ usNom de la table utilisateur
+const LMAX_PRENOM = 60;   // taille du champ usPrenom de la table utilisateur
+const LMAX_EMAIL = 255;   // taille du champ usMail de la table utilisateur
 
-define('LMIN_PSEUDO', 4);
+const LMIN_PSEUDO = 4;
 
-define('AGE_MINIMUM', 18);
+const AGE_MINIMUM = 18;
 
-define('LMIN_PASSWORD', 4);
+const LMIN_PASSWORD = 4;
 
 //_______________________________________________________________
 /**
