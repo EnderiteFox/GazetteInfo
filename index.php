@@ -85,7 +85,7 @@ function affContenuL() : void {
 function affUnArticleL(int $id, string $titre) : void {
     $titre = htmlProtegerSorties($titre); // ATTENTION : à ne pas oublier !!!
     echo
-            '<a href="./php/article.php?id=', $id, '">',
+            '<a href="./php/article.php?id=', chiffrerURL($id), '">',
                 '<img src="upload/', $id, '.jpg" alt="Photo d\'illustration | ', $titre, '"><br>',
                 $titre,
             '</a>';

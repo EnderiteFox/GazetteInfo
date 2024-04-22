@@ -37,7 +37,7 @@ const LMIN_PASSWORD = 4;
 /**
  * Affichage du début de la page HTML (head + menu + header).
  *
- * @param  string  $titre       le titre de la page (<head> et <h1>)
+ * @param  string  $titre       le titre de la page (head et h1)
  * @param  string  $prefixe     le préfixe du chemin relatif vers la racine du site
  *
  * @return void
@@ -159,7 +159,7 @@ function affArticleResume(array $article): void {
     else echo '<img src="../images/none.jpg" alt="Pas d\'image disponible">';
     echo '<h3>', htmlProtegerSorties($article['arTitre']), '</h3>';
     echo '<p>', htmlProtegerSorties($article['arResume']), '</p>';
-    echo '<footer><a href="article.php?id=', $article['arID'], '">Lire l\'article</a></footer></article>';
+    echo '<footer><a href="article.php?id=', chiffrerURL($article['arID']), '">Lire l\'article</a></footer></article>';
 }
 
 /**

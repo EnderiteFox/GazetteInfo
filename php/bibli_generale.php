@@ -355,3 +355,36 @@ function BBCodeProcess(string $text): string {
         $text
     );
 }
+
+const CLE_CHIFFREMENT = 'the end is never the end is never the end is never';
+
+/**
+ * Chiffre et signe une valeur
+ * @param string $val La valeur à chiffrer
+ * @return string La valeur chiffrée
+ */
+function chiffrerURL(string $val) : string {
+    $ivlen = openssl_cipher_iv_length($cipher='aes-128-gcm');
+    $iv = openssl_random_pseudo_bytes($ivlen);
+    $x = openssl_encrypt($val, $cipher, base64_decode(CLE_CHIFFREMENT), OPENSSL_RAW_DATA, $iv, $tag);
+    $x = $iv.$tag.$x;
+    $x = base64_encode($x);
+    return urlencode($x);
+}
+
+/**
+ * Déchiffre une valeur chiffrée avec chiffrerURL
+ *
+ * @param string $x	La valeur à déchiffrer
+ *
+ * @return string|false	La valeur déchiffrée ou false si erreur
+ */
+function dechiffrerURL(string $x) : string|false {
+    $x = base64_decode($x);
+    $ivlen = openssl_cipher_iv_length($cipher='aes-128-gcm');
+    $iv = substr($x, 0, $ivlen);
+    $taglen = 16;
+    $tag = substr($x, $ivlen, $taglen);
+    $x = substr($x, $ivlen + $taglen);
+    return openssl_decrypt($x, $cipher, base64_decode(CLE_CHIFFREMENT), OPENSSL_RAW_DATA, $iv, $tag);
+}

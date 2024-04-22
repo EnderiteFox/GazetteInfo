@@ -11,6 +11,11 @@ ob_start();
 session_start();
 
 if (!parametresControle('post', [], ['btnComment', 'commentText', 'btnSuppComm', 'commNum'])) sessionExit();
+if (!parametresControle('get', ['id'])) sessionExit();
+
+$_GET['id'] = dechiffrerURL($_GET['id']);
+if ($_GET['id'] === false) sessionExit();
+
 
 affEntete('Article');
 
@@ -36,7 +41,7 @@ function processComment(mysqli $bd): void {
     $id = $_GET['id'];
     $sql = "INSERT INTO commentaire VALUES (NULL, '$pseudo', '$text', $date, $id)";
     bdSendRequest($bd, $sql);
-    header('Location: article.php?id='.$_GET['id']);
+    header('Location: article.php?id='.chiffrerURL($_GET['id']));
 }
 
 /**
@@ -50,7 +55,7 @@ function processSupprComment(mysqli $bd): void {
     $commNum = mysqli_real_escape_string($bd, $_POST['commNum']);
     $sql = 'DELETE FROM commentaire WHERE coID = "'.$commNum.'"';
     bdSendRequest($bd, $sql);
-    header('Location: article.php?id='.$_GET['id']);
+    header('Location: article.php?id='.chiffrerURL($_GET['id']));
 }
 
 /*********************************************************
@@ -131,7 +136,7 @@ function affContenuL() : void {
     if (estAuthentifie() && $_SESSION['pseudo'] == $tab['arAuteur']) {
         echo
             '<section>',
-                '<p>Vous êtes l\'auteur de cet article, <a href="edition.php?id=', $id, '">cliquez ici pour le modifier</a>.</p>',
+                '<p>Vous êtes l\'auteur de cet article, <a href="edition.php?id=', chiffrerURL($id), '">cliquez ici pour le modifier</a>.</p>',
             '</section>';
     }
 
@@ -160,7 +165,7 @@ function affContenuL() : void {
         while ($tab = mysqli_fetch_assoc($result)) {
             echo '<li>';
             if (estAuthentifie() && $_SESSION['pseudo'] === $tab['coAuteur']){
-                echo '<form method="post" action="article.php?id=', $_GET['id'], '">',
+                echo '<form method="post" action="article.php?id=', chiffrerURL($_GET['id']), '">',
                 '<input type="text" name="commNum" value="', $tab['coID'], '" hidden>',
                 '<input type="submit" name="btnSuppComm" value="Supprimer le commentaire">',
                 '</form>';
@@ -190,7 +195,7 @@ function affContenuL() : void {
     }
     else {
         echo
-            '<form method="post" action="article.php?id='.$_GET['id'].'">',
+            '<form method="post" action="article.php?id='.chiffrerURL($_GET['id']).'">',
                 '<fieldset>',
                     '<legend>Ajoutez un commentaire</legend>',
                     '<textarea name="commentText" rows="5" cols="100" required></textarea>',
