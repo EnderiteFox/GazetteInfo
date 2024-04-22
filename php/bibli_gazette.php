@@ -146,3 +146,45 @@ function sessionExit(string $page = '../index.php'): void {
     exit();
 }
 
+/**
+ * Affiche le résumé d'un article
+ * @param array $article L'article à afficher
+ * @return void
+ */
+function affArticleResume(array $article): void {
+    echo '<article class="resume">';
+    if (is_file('../upload/'.$article['arID'].'.jpg')) {
+        echo '<img src="../upload/', $article['arID'], '.jpg" alt="Image d\'illustration">';
+    }
+    else echo '<img src="../images/none.jpg" alt="Pas d\'image disponible">';
+    echo '<h3>', htmlProtegerSorties($article['arTitre']), '</h3>';
+    echo '<p>', htmlProtegerSorties($article['arResume']), '</p>';
+    echo '<footer><a href="article.php?id=', $article['arID'], '">Lire l\'article</a></footer></article>';
+}
+
+/**
+ * Affiche une liste d'article, en les classant par date
+ * @param array $articles
+ * @return void
+ */
+function affArticles(array $articles): void {
+    $prevMonth = null;
+    $prevYear = null;
+
+    foreach ($articles as $tab) {
+        $date = $tab['arDateModif'] != null ? $tab['arDateModif'] : $tab['arDatePubli'];
+        $month = mb_substr($date, 4, 2);
+        $year = mb_substr($date, 0, 4);
+        if ($month != $prevMonth || $year != $prevYear) {
+            if ($month != null) echo '</section>';
+            echo
+            '<section>',
+            '<h2>', getArrayMonths()[$month - 1], ' ', $year, '</h2>';
+            $prevMonth = $month;
+            $prevYear = $year;
+        }
+        affArticleResume($tab);
+    }
+
+    if ($prevMonth != null) echo '</section>';
+}

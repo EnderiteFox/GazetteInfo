@@ -43,32 +43,9 @@ function affContenuL(int $numPage): void {
         'LIMIT 4 OFFSET '.(($numPage - 1) * 4);
     $result = bdSendRequest($bd, $sql);
 
-    $prevMonth = null;
-    $prevYear = null;
-
-    while ($tab = mysqli_fetch_assoc($result)) {
-        $date = $tab['arDateModif'] != null ? $tab['arDateModif'] : $tab['arDatePubli'];
-        $month = mb_substr($date, 4, 2);
-        $year = mb_substr($date, 0, 4);
-        if ($month != $prevMonth || $year != $prevYear) {
-            if ($month != null) echo '</section>';
-            echo
-                '<section>',
-                    '<h2>', getArrayMonths()[$month - 1], ' ', $year, '</h2>';
-            $prevMonth = $month;
-            $prevYear = $year;
-        }
-        echo '<article class="resume">';
-        if (is_file('../upload/'.$tab['arID'].'.jpg')) {
-            echo '<img src="../upload/', $tab['arID'], '.jpg" alt="Image d\'illustration">';
-        }
-        else echo '<img src="../images/none.jpg" alt="Pas d\'image disponible">';
-        echo '<h3>', htmlProtegerSorties($tab['arTitre']), '</h3>';
-        echo '<p>', htmlProtegerSorties($tab['arResume']), '</p>';
-        echo '<footer><a href="article.php?id=', $tab['arID'], '">Lire l\'article</a></footer></article>';
-    }
-
-    if ($prevMonth != null) echo '</section>';
+    $articles = [];
+    while ($tab = mysqli_fetch_assoc($result)) $articles[] = $tab;
+    affArticles($articles);
 
     mysqli_free_result($result);
 

@@ -361,6 +361,11 @@ main > section ul li:hover input {
     visibility: visible;
 }
 
+#article > section:first-of-type {
+    border-radius: 10px;
+    margin: 30px 0;
+}
+
 
 /******************************************************************************
     Règles appliquées à la page redaction.html
@@ -597,4 +602,21 @@ input[type=submit]:hover, input[type=reset]:hover {
 #pagination td input:hover {
     background: #c8c8c8;
     color: black;
+}
+
+/****************************************************************
+        Page recherche.php
+****************************************************************/
+
+#recherche input[type="text"] {
+    width: 50%;
+}
+
+#recherche input[type="submit"]:hover {
+    background: #c8c8c8;
+    color: black;
+}
+
+#recherche p.centre {
+    color: green;
 }

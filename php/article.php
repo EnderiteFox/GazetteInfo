@@ -126,7 +126,16 @@ function affContenuL() : void {
     $tab = htmlProtegerSorties($tab);
 
     echo
-        '<main id="article">',
+        '<main id="article">';
+
+    if (estAuthentifie() && $_SESSION['pseudo'] == $tab['arAuteur']) {
+        echo
+            '<section>',
+                '<p>Vous êtes l\'auteur de cet article, <a href="edition.php?id=', $id, '">cliquez ici pour le modifier</a>.</p>',
+            '</section>';
+    }
+
+    echo
             '<article>',
                 '<h3>', $tab['arTitre'], '</h3>',
                 '<img src="../upload/', $tab['arID'], '.jpg" alt="Photo d\'illustration | ', $tab['arTitre'], '">',
@@ -184,7 +193,7 @@ function affContenuL() : void {
             '<form method="post" action="article.php?id='.$_GET['id'].'">',
                 '<fieldset>',
                     '<legend>Ajoutez un commentaire</legend>',
-                    '<textarea name="commentText" rows="5" cols="100"></textarea>',
+                    '<textarea name="commentText" rows="5" cols="100" required></textarea>',
                     '<input type="submit" name="btnComment">',
                 '</fieldset>',
             '</form>';
