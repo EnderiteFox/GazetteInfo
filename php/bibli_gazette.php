@@ -33,6 +33,8 @@ const AGE_MINIMUM = 18;
 
 const LMIN_PASSWORD = 4;
 
+const LMAX_TITRE_ARTICLE = 150;
+
 //_______________________________________________________________
 /**
  * Affichage du début de la page HTML (head + menu + header).
@@ -187,4 +189,94 @@ function affArticles(array $articles): void {
     }
 
     if ($prevMonth != null) echo '</section>';
+}
+
+/**
+ * Affiche un formulaire d'édition d'article
+ * @param string $titre Le titre de la section
+ * @param string $page La page vers laquelle envoyer le formulaire
+ * @param string $btnTexte Le texte présent sur le bouton d'envoi
+ * @param array $err Un tableau contenant les éventuelles précedentes erreurs de création de l'article.
+ * Le tableau est vide si l'article a correctement été créé.
+ * false si l'article n'a pas encore été créé.
+ * @param string $arTitre Le précédent titre de l'article
+ * @param string $arResume Le précédent résumé de l'article
+ * @param string $arContenu Le précédent contenu de l'article
+ * @return void
+ */
+function affEditionArticle(
+    string $titre, string $page,
+    string $btnTexte, array|false $err,
+    string $arTitre = '', string $arResume = '', string $arContenu = ''
+): void {
+    echo
+        '<main>',
+            '<section>',
+                '<h2>', $titre, '</h2>';
+    if ($err !== false) {
+        if (sizeof($err) != 0) afficherTabErreurs($err, 'Les erreurs suivantes ont été relevées dans l\'article');
+        else echo '<p class="validationText">L\'article a bien été créé</p>';
+    }
+    echo
+                '<form enctype="multipart/form-data" method="post" action="', $page, '">',
+                    '<p>',
+                        '<label for="title">Titre de l\'article : </label>',
+                        '<input type="text" id="title" name="title" value="', $arTitre, '" required>',
+                    '</p>',
+                    '<p>',
+                        '<label for="resume">Résumé de l\'article : </label><br>',
+                        '<textarea id="resume" name="resume" cols="115" rows="15" ',
+                            'placeholder="Le formattage BBCode est disponible ici" required>', $arResume, '</textarea>',
+                    '</p>',
+                    '<p>',
+                        '<label for="content">Contenu de l\'article : </label><br>',
+                        '<textarea id="content" name="content" cols="115" rows="15" ',
+                            'placeholder="Le formattage BBCode est disponible ici" required>', $arContenu, '</textarea>',
+                    '</p>',
+                    '<p>',
+                        '<label for="image">Image d\'illustration de l\'article: </label>',
+                        '<input type="file" name="image">',
+                    '</p>',
+                    '<p>',
+                        '<input type="submit" name="btnEditArticle" value="', $btnTexte, '">',
+                    '</p>',
+                '</form>',
+            '</section>',
+        '</main>';
+}
+
+/**
+ * Vérifie que le titre et le contenu d'un article soient valides
+ * @param array $err Le tableau dans lequel seront ajoutés les messages d'erreurs
+ * @param string $titre Le titre de l'article
+ * @param string $resume Le résumé de l'article
+ * @param string $contenu Le contenu de l'article
+ * @return void
+ */
+function verifierArticle(array &$err, string $titre, string $resume, string $contenu): void {
+    if (strlen($titre) == 0) $err[] = 'Le titre ne doit pas être vide';
+    if (strlen($titre) > LMAX_TITRE_ARTICLE) $err[] = 'Le titre est trop long';
+    if (strlen($resume) == 0) $err[] = 'Le résumé de l\'article ne doit pas être vide';
+    if (strlen($contenu) == 0) $err[] = 'Le contenu de l\'article ne doit pas être vide';
+    if (preg_match('/<.*?>/', $titre)) $err[] = 'Le titre ne doit pas contenir de balises HTML';
+    if (preg_match('/<.*?>/', $resume)) $err[] = 'Le résumé ne doit pas contenir de balises HTML';
+    if (preg_match('/<.*?>/', $contenu)) $err[] = 'L\'article ne doit pas contenir de balises HTML';
+    if (isset($_FILES['image'])) {
+        $file = $_FILES['image'];
+        if ($file['error'] != 0 || !@is_uploaded_file($file['tmp_name'])) {
+            $err[] = 'Une erreur est survenue lors de l\'upload du fichier';
+        }
+        else {
+            if ($file['size'] > 1024 * 100) $err[] = 'L\'image d\'illustration doit faire moins de 100Ko';
+            if (strtolower(substr($file['name'], strrpos($file['name'], '.'))) != '.jpg') {
+                $err[] = 'L\'image d\'illustration doit être au format JPG';
+            }
+            else {
+                $type = mime_content_type($file['tmp_name']);
+                if ($type != 'image/jpeg' && $type != 'image/jpg') {
+                    $err[] = 'L\'image d\'illustration doit être au format JPG';
+                }
+            }
+        }
+    }
 }

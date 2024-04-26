@@ -61,7 +61,7 @@ function affMenuRecherche(array $valid): void {
         echo '<div class="erreur">Le ou les critères de recherche ne sont pas valides.</div>';
     }
     else if (sizeof($valid) != 0) {
-        $text = '<p class="centre">Critères de recherche utilisés : "';
+        $text = '<p class="validationText">Critères de recherche utilisés : "';
         for ($i = 0; $i < sizeof($valid); $i++) {
             $text .= $valid[$i];
             if ($i < sizeof($valid) - 1) $text .= ' ';

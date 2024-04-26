@@ -94,7 +94,7 @@ function affFormulaireL(): void {
     echo
                     '<tr>',
                         '<td colspan="2">',
-                            '<input type="submit" name="btnConnexion" value="Se connecter">',
+                            '<input type="submit" name="btnConnexion" value="Se connecter" class="redButton">',
                             '<input type="reset" value="Annuler">',
                         '</td>',
                     '</tr>',

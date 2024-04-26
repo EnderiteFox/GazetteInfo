@@ -388,3 +388,18 @@ function dechiffrerURL(string $x) : string|false {
     $x = substr($x, $ivlen + $taglen);
     return openssl_decrypt($x, $cipher, base64_decode(CLE_CHIFFREMENT), OPENSSL_RAW_DATA, $iv, $tag);
 }
+
+/**
+ * Affiche la liste des erreurs présentes dans le tableau
+ * @param array $err Le tableau des erreurs à afficher
+ * @return void
+ */
+function afficherTabErreurs(array $err, string $message): void {
+    echo    '<div class="erreur">', $message,
+    '<ul>';
+    foreach ($err as $e) {
+        echo        '<li>', $e, '</li>';
+    }
+    echo        '</ul>',
+    '</div>';
+}

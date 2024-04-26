@@ -557,7 +557,7 @@ form input[type=submit], form input[type=reset] {
     cursor: pointer;
 }
 
-input[type=submit]:hover, input[type=reset]:hover {
+input[type=submit].redButton:hover, input[type=reset]:hover {
     background: red;
     color: white;
 }
@@ -575,6 +575,11 @@ input[type=submit]:hover, input[type=reset]:hover {
 
 .erreur ul li::before {
     content: "\26AC\00A0";
+}
+
+input[type="submit"]:hover {
+    background: #c8c8c8;
+    color: black;
 }
 
 /****************************************************************
@@ -599,11 +604,6 @@ input[type=submit]:hover, input[type=reset]:hover {
     margin: 5px;
 }
 
-#pagination td input:hover {
-    background: #c8c8c8;
-    color: black;
-}
-
 /****************************************************************
         Page recherche.php
 ****************************************************************/
@@ -612,11 +612,16 @@ input[type=submit]:hover, input[type=reset]:hover {
     width: 50%;
 }
 
-#recherche input[type="submit"]:hover {
-    background: #c8c8c8;
-    color: black;
+p.validationText {
+    color: green;
+    text-align: center;
 }
 
-#recherche p.centre {
-    color: green;
+/****************************************************************
+        Page nouveau.php et edition.php
+****************************************************************/
+
+textarea {
+    width: auto;
+    resize: vertical;
 }

@@ -167,7 +167,7 @@ function affContenuL() : void {
             if (estAuthentifie() && $_SESSION['pseudo'] === $tab['coAuteur']){
                 echo '<form method="post" action="article.php?id=', chiffrerURL($_GET['id']), '">',
                 '<input type="text" name="commNum" value="', $tab['coID'], '" hidden>',
-                '<input type="submit" name="btnSuppComm" value="Supprimer le commentaire">',
+                '<input type="submit" name="btnSuppComm" value="Supprimer le commentaire" class="redButton">',
                 '</form>';
             }
             echo    '<p>Commentaire de <strong>', htmlProtegerSorties($tab['coAuteur']),
@@ -198,7 +198,7 @@ function affContenuL() : void {
             '<form method="post" action="article.php?id='.chiffrerURL($_GET['id']).'">',
                 '<fieldset>',
                     '<legend>Ajoutez un commentaire</legend>',
-                    '<textarea name="commentText" rows="5" cols="100" required></textarea>',
+                    '<textarea name="commentText" rows="5" cols="110" required></textarea>',
                     '<input type="submit" name="btnComment">',
                 '</fieldset>',
             '</form>';

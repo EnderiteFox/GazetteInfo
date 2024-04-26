@@ -79,15 +79,8 @@ function affFormulaireL(?array $err): void {
             '<section>',
                 '<h2>Formulaire d\'inscription</h2>',
                 '<p>Pour vous inscrire, remplissez le formulaire ci-dessous.</p>';
-    if (is_array($err)) {
-        echo    '<div class="erreur">Les erreurs suivantes ont été relevées lors de votre inscription :',
-                    '<ul>';
-        foreach ($err as $e) {
-            echo        '<li>', $e, '</li>';
-        }
-        echo        '</ul>',
-                '</div>';
-    }
+
+    if (is_array($err)) afficherTabErreurs($err, 'Les erreurs suivantes ont été relevées lors de votre inscription :');
 
 
     echo
@@ -129,7 +122,7 @@ function affFormulaireL(?array $err): void {
                     '</tr>',
                     '<tr>',
                         '<td colspan="2">',
-                            '<input type="submit" name="btnInscription" value="S\'inscrire"> ',
+                            '<input type="submit" name="btnInscription" value="S\'inscrire" class="redButton"> ',
                             '<input type="reset" value="Réinitialiser">',
                         '</td>',
                     '</tr>',
