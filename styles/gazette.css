@@ -93,11 +93,11 @@ a[href]:hover {
     text-decoration: underline;
 }
 
-a[href^=http]:hover {
+a[href^=http]:not(.notexternal):hover {
     padding-right: 20px;
     background: url(../images/lien_externe.gif) right center no-repeat;
 }
-a[href^=http]:hover::after {
+a[href^=http]:not(.notexternal):hover::after {
     content: " (" attr(href) ")";
 }
 
@@ -624,4 +624,41 @@ p.validationText {
 textarea {
     width: auto;
     resize: vertical;
+}
+
+/****************************************************************
+        Popup
+****************************************************************/
+
+.popup {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.popup div {
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.popup div p, .popup div table {
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.popup td {
+    padding: 0 20px;
 }

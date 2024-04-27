@@ -23,7 +23,11 @@ $err = isset($_POST['btnEditArticle']) ? creerArticle($title, $resume, $content)
 
 affEntete('Nouvel article');
 
-affEditionArticle('Nouvel article', 'nouveau.php', 'Publier', $err, $title, $resume, $content);
+affEditionArticle(
+    'Nouvel article', 'nouveau.php', 'Publier', $err,
+    false, 'L\'article a bien été créé',
+    $title, $resume, $content
+);
 
 affPiedDePage();
 
@@ -34,10 +38,11 @@ affPiedDePage();
 function creerArticle(string $title, string $resume, string $content): array {
     $err = [];
     verifierArticle($err, $title, $resume, $content);
+    traitementImage($err);
     if (sizeof($err) != 0) return $err;
 
     $bd = bdConnect();
-    // Getting next article id
+    // Récupération du prochain id d'article
     $sql = 'SELECT MAX(arID) FROM article';
     $result = bdSendRequest($bd, $sql);
     if (mysqli_num_rows($result) == 0) {
@@ -47,13 +52,17 @@ function creerArticle(string $title, string $resume, string $content): array {
     $tab = mysqli_fetch_assoc($result);
     $id = $tab['MAX(arID)'] + 1;
 
-    // Move the file
-    if (!@move_uploaded_file($_FILES['image']['tmp_name'], '../upload/'.$id.'.jpg')) {
+    // Déplacement du fichier
+    if (
+        isset($_FILES['image'])
+        && strlen($_FILES['image']['name']) > 0
+        && !@move_uploaded_file($_FILES['image']['tmp_name'], '../upload/'.$id.'.jpg')
+    ) {
         $err[] = 'Impossible de déplacer le fichier';
         return $err;
     }
 
-    // Inserting article
+    // Création de l'article
     $sql = 'INSERT INTO article VALUES ('.$id.', "'
         .mysqli_real_escape_string($bd, $title).'", "'
         .mysqli_real_escape_string($bd, $resume).'", "'
@@ -62,6 +71,8 @@ function creerArticle(string $title, string $resume, string $content): array {
         .mysqli_real_escape_string($bd, $_SESSION['pseudo']).'")';
 
     bdSendRequest($bd, $sql);
+
+    mysqli_close($bd);
 
     return $err;
 }

@@ -196,9 +196,11 @@ function affArticles(array $articles): void {
  * @param string $titre Le titre de la section
  * @param string $page La page vers laquelle envoyer le formulaire
  * @param string $btnTexte Le texte présent sur le bouton d'envoi
- * @param array $err Un tableau contenant les éventuelles précedentes erreurs de création de l'article.
+ * @param array|false $err Un tableau contenant les éventuelles précédentes erreurs de création de l'article.
  * Le tableau est vide si l'article a correctement été créé.
  * false si l'article n'a pas encore été créé.
+ * @param bool $suppButton Indique si le bouton de suppression de l'article doit être affiché ou non
+ * @param string $confirmMessage Le message de confirmation à afficher si le traitement a réussi
  * @param string $arTitre Le précédent titre de l'article
  * @param string $arResume Le précédent résumé de l'article
  * @param string $arContenu Le précédent contenu de l'article
@@ -207,15 +209,24 @@ function affArticles(array $articles): void {
 function affEditionArticle(
     string $titre, string $page,
     string $btnTexte, array|false $err,
+    bool $suppButton, string $confirmMessage,
     string $arTitre = '', string $arResume = '', string $arContenu = ''
 ): void {
     echo
-        '<main>',
+        '<main>';
+    if (isset($_POST['btnSupprArticle'])) {
+        affMenuConfirm(
+            'Voulez-vous vraiment supprimer cet article?',
+            'Annuler', $_SERVER['HTTP_REFERER'],
+            'Confirmer', 'edition.php?id='.chiffrerURL($_GET['id']).'&suppr='.chiffrerURL(1)
+        );
+    }
+    echo
             '<section>',
                 '<h2>', $titre, '</h2>';
     if ($err !== false) {
         if (sizeof($err) != 0) afficherTabErreurs($err, 'Les erreurs suivantes ont été relevées dans l\'article');
-        else echo '<p class="validationText">L\'article a bien été créé</p>';
+        else echo '<p class="validationText">', $confirmMessage, '</p>';
     }
     echo
                 '<form enctype="multipart/form-data" method="post" action="', $page, '">',
@@ -235,10 +246,23 @@ function affEditionArticle(
                     '</p>',
                     '<p>',
                         '<label for="image">Image d\'illustration de l\'article: </label>',
-                        '<input type="file" name="image">',
+                        '<input type="file" name="image" id="image">',
                     '</p>',
                     '<p>',
-                        '<input type="submit" name="btnEditArticle" value="', $btnTexte, '">',
+                        '<table', $suppButton ? '' : ' class="centre"', '>',
+                            '<tr>',
+                                '<td>',
+                                    '<input type="submit" name="btnEditArticle" value="', $btnTexte, '">',
+                                '</td>';
+    if ($suppButton) {
+        echo
+                                '<td>',
+                                    '<input type="submit" name="btnSupprArticle" value="Supprimer l\'article" class="redButton">',
+                                '</td>';
+    }
+    echo
+                            '</tr>',
+                        '</table>',
                     '</p>',
                 '</form>',
             '</section>',
@@ -246,7 +270,7 @@ function affEditionArticle(
 }
 
 /**
- * Vérifie que le titre et le contenu d'un article soient valides
+ * Vérifie que le titre, le résumé et le contenu d'un article soient valides
  * @param array $err Le tableau dans lequel seront ajoutés les messages d'erreurs
  * @param string $titre Le titre de l'article
  * @param string $resume Le résumé de l'article
@@ -261,7 +285,16 @@ function verifierArticle(array &$err, string $titre, string $resume, string $con
     if (preg_match('/<.*?>/', $titre)) $err[] = 'Le titre ne doit pas contenir de balises HTML';
     if (preg_match('/<.*?>/', $resume)) $err[] = 'Le résumé ne doit pas contenir de balises HTML';
     if (preg_match('/<.*?>/', $contenu)) $err[] = 'L\'article ne doit pas contenir de balises HTML';
-    if (isset($_FILES['image'])) {
+    traitementImage($err);
+}
+
+/**
+ * Effectue le traitement de l'image, et affiche une erreur si le traitement échoue
+ * @param array $err Le tableau dans lequel seront ajoutés les messages d'erreur
+ * @return void
+ */
+function traitementImage(array &$err): void {
+    if (isset($_FILES['image']) && strlen($_FILES['image']['name']) > 0) {
         $file = $_FILES['image'];
         if ($file['error'] != 0 || !@is_uploaded_file($file['tmp_name'])) {
             $err[] = 'Une erreur est survenue lors de l\'upload du fichier';
@@ -275,6 +308,25 @@ function verifierArticle(array &$err, string $titre, string $resume, string $con
                 $type = mime_content_type($file['tmp_name']);
                 if ($type != 'image/jpeg' && $type != 'image/jpg') {
                     $err[] = 'L\'image d\'illustration doit être au format JPG';
+                }
+                else {
+                    list($width, $height) = getimagesize($file['tmp_name']);
+                    $r = $width / $height;
+                    if ($r != 4/3) $err[] = 'L\'image d\'illustration doit être au format 4/3';
+                    else {
+                        $image = imagecreatefromjpeg($file['tmp_name']);
+                        if ($image === false) {
+                            $err[] = 'La création de l\'image a échoué';
+                            return;
+                        }
+                        $image = imagescale($image, 248, 186);
+                        if ($image === false) {
+                            $err[] = 'Le redimensionnement de l\'image a échoué';
+                            return;
+                        }
+                        $success = imagejpeg($image, $file['tmp_name']);
+                        if (!$success) $err[] = 'Le déplacement de l\'image redimensionnée a échoué';
+                    }
                 }
             }
         }

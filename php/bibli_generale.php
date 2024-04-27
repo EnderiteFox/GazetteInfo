@@ -403,3 +403,39 @@ function afficherTabErreurs(array $err, string $message): void {
     echo        '</ul>',
     '</div>';
 }
+
+/**
+ * Affiche un menu de confirmation
+ * @param string $message Le message de confirmation
+ * @param string $cancelText Le texte affiché sur le bouton d'annulation
+ * @param string $cancelPage La page vers laquelle mène le bouton d'annulation
+ * @param string $confirmText Le texte affiché sur le bouton de confirmation
+ * @param string $confirmPage La page vers laquelle mène le bouton de confirmation
+ * @return void
+ */
+function affMenuConfirm(
+    string $message,
+    string $cancelText, string $cancelPage,
+    string $confirmText, string $confirmPage
+): void {
+    echo
+        '<div class="popup">',
+            '<div>',
+                '<p>', $message, '</p>',
+                '<table>',
+                    '<tr>',
+                        '<td>',
+                            '<a href="', $cancelPage, '" class="notexternal">',
+                                '<input type="submit" value="', $cancelText, '">',
+                            '</a>',
+                        '</td>',
+                        '<td>',
+                            '<a href="', $confirmPage, '">',
+                                '<input type="submit" value="', $confirmText, '" class="redButton">',
+                            '</a>',
+                        '</td>',
+                    '</tr>',
+                '</table>',
+            '</div>',
+        '</div>';
+}
