@@ -394,7 +394,9 @@ function affEditionArticle(
                         '</table>',
                     '</p>',
                 '</form>',
-            '</section>',
+            '</section>';
+    affBBCodeGuide();
+    echo
         '</main>';
 }
 

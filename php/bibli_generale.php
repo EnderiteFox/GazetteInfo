@@ -356,6 +356,37 @@ function BBCodeProcess(string $text): string {
     );
 }
 
+function affBBCodeGuide(): void {
+    $tags = [
+        '<p>contenu</p>' => '[p]contenu[/p]',
+        '<strong>contenu</strong>' => '[gras]contenu[/gras]',
+        '<em>contenu</em>' => '[it]contenu[/it]',
+        '<blockquote>contenu</blockquote>' => '[citation]contenu[/citation]',
+        '<ul>contenu</ul>' => '[liste]contenu[/liste]',
+        '<li>contenu</li>' => '[item]contenu[/item]',
+        '<a href="url">contenu</a>' => '[a:url]contenu[/a]',
+        '<br>' => '[br]',
+        '<figure>[br]<iframe width=\'w\' height=\'h\' src=\'url\' allow=\'encrypted-media; clipboard-write\'></iframe>[br]<figcaption>legende</figcaption>[br]</figure>' => '[widget-deezer:w:h:url legende]',
+        '&#NNN' => '[#NNN]',
+        '&#xNNN' => '[#xNNN]'
+    ];
+    echo
+        '<section>',
+            '<h2>Guide BBCode</h2>',
+            '<p>Voici un guide d\'utilisation du BBCode:</p>',
+            '<table id="horoscope">',
+                '<tr>',
+                    '<td>HTML</td>',
+                    '<td>BBCode</td>',
+                '</tr>';
+    foreach ($tags as $key => $value) {
+        echo '<tr><td>', BBCodeProcess(htmlProtegerSorties($key)), '</td><td>', htmlProtegerSorties($value), '</td></tr>';
+    }
+    echo
+            '</table>',
+        '</section>';
+}
+
 const CLE_CHIFFREMENT = 'the end is never the end is never the end is never';
 
 /**
