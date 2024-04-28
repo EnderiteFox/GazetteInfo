@@ -108,5 +108,6 @@ function supprimerArticle(): void {
     $sql = 'DELETE FROM article WHERE arID='.$_GET['id'];
     bdSendRequest($bd, $sql);
     mysqli_close($bd);
+    unlink('../upload/'.$_GET['id'].'.jpg');
     header('Location: ../index.php');
 }
