@@ -392,6 +392,7 @@ function dechiffrerURL(string $x) : string|false {
 /**
  * Affiche la liste des erreurs présentes dans le tableau
  * @param array $err Le tableau des erreurs à afficher
+ * @param string $message Le message d'erreur à afficher
  * @return void
  */
 function afficherTabErreurs(array $err, string $message): void {
