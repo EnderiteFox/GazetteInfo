@@ -70,12 +70,12 @@ function processSupprComment(mysqli $bd): void {
  * @return  void
  */
 function affContenuL() : void {
-    if (! parametresControle('get', ['id'])){
+    if (!parametresControle('get', ['id'])) {
         affErreurL('Il faut utiliser une URL de la forme : http://..../php/article.php?id=XXX');
         return; // ==> fin de la fonction
     }
 
-    if (! estEntier($_GET['id'])){
+    if (!estEntier($_GET['id'])) {
         affErreurL('L\'identifiant doit être un entier');
         return; // ==> fin de la fonction
     }
@@ -179,9 +179,7 @@ function affContenuL() : void {
         echo '</ul>';
     }
     // sinon on indique qu'il n'y a pas de commentaires
-    else {
-        echo '<p>Il n\'y a pas de commentaire pour cet article. </p>';
-    }
+    else echo '<p>Il n\'y a pas de commentaire pour cet article. </p>';
 
     // Libération de la mémoire associée au résultat de la requête
     mysqli_free_result($result);
@@ -255,7 +253,7 @@ function upperCaseFirstLetterLowerCaseRemainderL(string $str) : string {
 /**
  * Affichage d'un message d'erreur dans une zone dédiée de la page.
  *
- * @param  string  $msg    le message d'erreur à afficher.
+ * @param  string  $message    le message d'erreur à afficher.
  *
  * @return void
  */

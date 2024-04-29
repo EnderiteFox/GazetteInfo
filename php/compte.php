@@ -109,7 +109,7 @@ function affFormulaireL(mysqli|false &$bd, array $err): void {
 /**
  * Récupère les informations de l'utilisateur dans la base de données
  * @param mysqli $bd La base de donnée
- * @return array|false Un tableau contenant les informations de l'utilisateurn, ou false si une erreur est survenue
+ * @return array|false Un tableau contenant les informations de l'utilisateur, ou false si une erreur est survenue
  */
 function recupererInformations(mysqli $bd): array|false {
     $sql = 'SELECT utCivilite, utNom, utPrenom, utDateNaissance, utEmail, utMailsPourris FROM utilisateur '.

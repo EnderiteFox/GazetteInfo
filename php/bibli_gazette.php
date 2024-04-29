@@ -169,8 +169,8 @@ function affRadSexe(array $values): void {
 
 function affFormInfoPerso(array $values): void {
     affRadSexe($values);
-    affLigneInput('Votre nom :', array('type' => 'text', 'name' => 'nom', 'value' => $values['nom'], 'required' => null));
-    affLigneInput('Votre prénom :', array('type' => 'text', 'name' => 'prenom', 'value' => $values['prenom'], 'required' => null));
+    affLigneInput('Votre nom :', array('type' => 'text', 'name' => 'nom', 'value' => htmlProtegerSorties($values['nom']), 'required' => null));
+    affLigneInput('Votre prénom :', array('type' => 'text', 'name' => 'prenom', 'value' => htmlProtegerSorties($values['prenom']), 'required' => null));
     $naissance = $values['naissance'];
     if (strlen($naissance) != 0) {
         $split = str_split($naissance, 4);
@@ -179,7 +179,7 @@ function affFormInfoPerso(array $values): void {
         $naissance .= $split2[0] . '-' . $split2[1];
     }
     affLigneInput('Votre date de naissance :', array('type' => 'date', 'name' => 'naissance', 'value' => $naissance, 'required' => null));
-    affLigneInput('Votre email :', array('type' => 'email', 'name' => 'email', 'value' => $values['email'], 'required' => null));
+    affLigneInput('Votre email :', array('type' => 'email', 'name' => 'email', 'value' => htmlProtegerSorties($values['email']), 'required' => null));
 }
 
 /**
@@ -190,7 +190,7 @@ function affFormInfoPerso(array $values): void {
  */
 function verifierInfoPerso(array &$err): array {
     // vérification de la civilité
-    if (! isset($_POST['radSexe'])){
+    if (!isset($_POST['radSexe'])) {
         $err[] = 'Vous devez choisir une civilité.';
     }
     else if (!($_POST['radSexe'] == 'h' || $_POST['radSexe'] == 'f' || $_POST['radSexe'] == 'nb')) {
@@ -361,17 +361,17 @@ function affEditionArticle(
                 '<form enctype="multipart/form-data" method="post" action="', $page, '">',
                     '<p>',
                         '<label for="title">Titre de l\'article : </label>',
-                        '<input type="text" id="title" name="title" value="', $arTitre, '" required>',
+                        '<input type="text" id="title" name="title" value="', htmlProtegerSorties($arTitre), '" required>',
                     '</p>',
                     '<p>',
                         '<label for="resume">Résumé de l\'article : </label><br>',
                         '<textarea id="resume" name="resume" cols="115" rows="15" ',
-                            'placeholder="Le formattage BBCode est disponible ici" required>', $arResume, '</textarea>',
+                            'placeholder="Le formattage BBCode est disponible ici" required>', htmlProtegerSorties($arResume), '</textarea>',
                     '</p>',
                     '<p>',
                         '<label for="content">Contenu de l\'article : </label><br>',
                         '<textarea id="content" name="content" cols="115" rows="15" ',
-                            'placeholder="Le formattage BBCode est disponible ici" required>', $arContenu, '</textarea>',
+                            'placeholder="Le formattage BBCode est disponible ici" required>', htmlProtegerSorties($arContenu), '</textarea>',
                     '</p>',
                     '<p>',
                         '<label for="image">Image d\'illustration de l\'article: </label>',
