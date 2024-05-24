@@ -173,10 +173,8 @@ function affFormInfoPerso(array $values): void {
     affLigneInput('Votre prénom :', array('type' => 'text', 'name' => 'prenom', 'value' => htmlProtegerSorties($values['prenom']), 'required' => null));
     $naissance = $values['naissance'];
     if (strlen($naissance) != 0) {
-        $split = str_split($naissance, 4);
-        $naissance = $split[0] . '-';
-        $split2 = str_split($split[1], 2);
-        $naissance .= $split2[0] . '-' . $split2[1];
+        $naissance = substr_replace($naissance, '-', 4, 0);
+        $naissance = substr_replace($naissance, '-', 7, 0);
     }
     affLigneInput('Votre date de naissance :', array('type' => 'date', 'name' => 'naissance', 'value' => $naissance, 'required' => null));
     affLigneInput('Votre email :', array('type' => 'email', 'name' => 'email', 'value' => htmlProtegerSorties($values['email']), 'required' => null));
